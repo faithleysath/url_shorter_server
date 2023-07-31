@@ -3,40 +3,55 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  // Patch,
   Param,
   Delete,
 } from '@nestjs/common';
 import { UrlsService } from './urls.service';
-import { CreateUrlDto } from './dto/create-url.dto';
-import { UpdateUrlDto } from './dto/update-url.dto';
+import { ShortLink as ShortLinkModel } from '@prisma/client';
 
 @Controller('urls')
 export class UrlsController {
   constructor(private readonly urlsService: UrlsService) {}
 
   @Post()
-  create(@Body() createUrlDto: CreateUrlDto) {
-    return this.urlsService.create(createUrlDto);
+  async create(
+    @Body()
+    Data: {
+      expiresAt: Date;
+      title?: string;
+      original: string;
+      short: string;
+    },
+  ): Promise<ShortLinkModel> {
+    const { expiresAt, title, original, short } = Data;
+    return this.urlsService.create({
+      expiresAt,
+      title,
+      original,
+      short,
+    });
   }
 
   @Get()
-  findAll() {
-    return this.urlsService.findAll();
+  async findAll(): Promise<ShortLinkModel[]> {
+    return this.urlsService.findAll({
+      where: { expiresAt: { gte: new Date() } },
+    });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.urlsService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<ShortLinkModel> {
+    return this.urlsService.findOne({ id: Number(id) });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUrlDto: UpdateUrlDto) {
-    return this.urlsService.update(+id, updateUrlDto);
-  }
+  // @Patch(':id')
+  // async update(@Param('id') id: string, @Body() ) {
+  //   return this.urlsService.update(+id, updateUrlDto);
+  // }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.urlsService.remove(+id);
+  async remove(@Param('id') id: string): Promise<ShortLinkModel> {
+    return this.urlsService.delete({ id: Number(id) });
   }
 }

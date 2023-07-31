@@ -22,6 +22,7 @@
     "commitall": "git add -A && cz-customizable && git push"
   },
   "dependencies": {
+    "@adminjs/express": "^6.0.0",
     "@adminjs/nestjs": "^6.0.1",
     "@adminjs/prisma": "^5.0.1",
     "@nestjs/common": "^10.0.0",
@@ -30,6 +31,7 @@
     "@nestjs/swagger": "^7.1.4",
     "@prisma/client": "5.0.0",
     "adminjs": "^7.2.0",
+    "express-formidable": "^1.2.0",
     "express-session": "^1.17.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"

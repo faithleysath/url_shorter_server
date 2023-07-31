@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@adminjs/express':
+    specifier: ^6.0.0
+    version: 6.0.0(adminjs@7.2.0)(express-formidable@1.2.0)(express-session@1.17.3)(express@4.18.2)(tslib@2.6.1)
   '@adminjs/nestjs':
     specifier: ^6.0.1
     version: 6.0.1(@nestjs/common@10.0.0)(@nestjs/core@10.0.0)(adminjs@7.2.0)(rxjs@7.8.1)
@@ -29,6 +32,9 @@ dependencies:
   adminjs:
     specifier: ^7.2.0
     version: 7.2.0
+  express-formidable:
+    specifier: ^1.2.0
+    version: 1.2.0
   express-session:
     specifier: ^1.17.3
     version: 1.17.3
@@ -164,6 +170,22 @@ packages:
       - '@types/react'
       - prop-types
       - react-is
+    dev: false
+
+  /@adminjs/express@6.0.0(adminjs@7.2.0)(express-formidable@1.2.0)(express-session@1.17.3)(express@4.18.2)(tslib@2.6.1):
+    resolution: {integrity: sha512-TIylSszG5yUp+uHFYWWCrlztViiR05KM7suDo4SWd4UezZYc0mwNgfYPsnEmKkf5VFMEiCtYqhdCt38OxUPn/g==}
+    peerDependencies:
+      adminjs: ^7.0.0
+      express: '>=4.18.2'
+      express-formidable: ^1.2.0
+      express-session: '>=1.17.3'
+      tslib: ^2.5.0
+    dependencies:
+      adminjs: 7.2.0
+      express: 4.18.2
+      express-formidable: 1.2.0
+      express-session: 1.17.3
+      tslib: 2.6.1
     dev: false
 
   /@adminjs/nestjs@6.0.1(@nestjs/common@10.0.0)(@nestjs/core@10.0.0)(adminjs@7.2.0)(rxjs@7.8.1):
@@ -4656,6 +4678,13 @@ packages:
       jest-util: 29.6.2
     dev: true
 
+  /express-formidable@1.2.0:
+    resolution: {integrity: sha512-w1vXjF3gb50UKTNkFaW8/4rqY4dUrKfZ1sAZzwAF9YxCAgj/29QZsycf71di0GkskrZOAkubk9pvGYfxyAMYiw==}
+    engines: {node: '>= 8'}
+    dependencies:
+      formidable: 1.2.6
+    dev: false
+
   /express-session@1.17.3:
     resolution: {integrity: sha512-4+otWXlShYlG1Ma+2Jnn+xgKUZTMJ5QD3YvfilX3AcocOAbIkVylSWEklzALe/+Pu4qV6TYBj5GwOBFfdKqLBw==}
     engines: {node: '>= 0.8.0'}
@@ -4902,6 +4931,11 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
+
+  /formidable@1.2.6:
+    resolution: {integrity: sha512-KcpbcpuLNOwrEjnbpMC0gS+X8ciDoZE1kkqzat4a8vrprf+s9pKNQ/QIwWfbfs4ltgmFl3MD177SNTkve3BwGQ==}
+    deprecated: 'Please upgrade to latest, formidable@v2 or formidable@v3! Check these notes: https://bit.ly/2ZEqIau'
+    dev: false
 
   /formidable@2.1.2:
     resolution: {integrity: sha512-CM3GuJ57US06mlpQ47YcunuUZ9jpm8Vx+P2CGt2j7HpgkKZO/DJYQ0Bobim8G6PFQmK5lOqOOdUXboU+h73A4g==}
