@@ -14,6 +14,7 @@ model ShortLink {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   expiresAt DateTime
+  title     String?
   original  String
   short     String   @unique
   clicks    Int      @default(0)
