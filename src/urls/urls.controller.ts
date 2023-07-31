@@ -6,11 +6,12 @@ import {
   // Patch,
   Param,
   Delete,
+  UseFilters,
 } from '@nestjs/common';
 import { UrlsService } from './urls.service';
 import { ShortLink as ShortLinkModel } from '@prisma/client';
 import { CreateUrlDto } from './dto/create-url.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PrismaExceptionFilter } from '../prisma/prisma-exception.filter';
 
 @Controller('urls')
 export class UrlsController {
@@ -30,16 +31,26 @@ export class UrlsController {
     });
   }
 
-  @Get()
-  async findAll(): Promise<ShortLinkModel[]> {
-    return this.urlsService.findAll({
-      where: { expiresAt: { gte: new Date() } },
-    });
-  }
+  // @Get()
+  // async findAll(): Promise<ShortLinkModel[]> {
+  //   return this.urlsService.findAll({
+  //     where: { expiresAt: { gte: new Date() } },
+  //   });
+  // }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<ShortLinkModel> {
-    return this.urlsService.findOne({ id: Number(id) });
+  // @Get(':id')
+  // async findOne(@Param('id') id: string): Promise<ShortLinkModel> {
+  //   return this.urlsService.findOne({
+  //     id: Number(id),
+  //     expiresAt: { gte: new Date() },
+  //   });
+  // }
+  @Get('short/:short')
+  async findOneByShort(@Param('short') short: string): Promise<ShortLinkModel> {
+    return this.urlsService.findOne({
+      short: short,
+      expiresAt: { gte: new Date() },
+    });
   }
 
   // @Patch(':id')
@@ -47,8 +58,9 @@ export class UrlsController {
   //   return this.urlsService.update(+id, updateUrlDto);
   // }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<ShortLinkModel> {
-    return this.urlsService.delete({ id: Number(id) });
-  }
+  // @Delete(':id')
+  // @UseFilters(PrismaExceptionFilter)
+  // async remove(@Param('id') id: string): Promise<ShortLinkModel> {
+  //   return this.urlsService.delete({ id: Number(id) });
+  // }
 }
