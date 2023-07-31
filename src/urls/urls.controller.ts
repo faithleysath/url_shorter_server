@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { UrlsService } from './urls.service';
 import { ShortLink as ShortLinkModel } from '@prisma/client';
+import { CreateUrlDto } from './dto/create-url.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Controller('urls')
 export class UrlsController {
@@ -17,12 +19,7 @@ export class UrlsController {
   @Post()
   async create(
     @Body()
-    Data: {
-      expiresAt: Date;
-      title?: string;
-      original: string;
-      short: string;
-    },
+    Data: CreateUrlDto,
   ): Promise<ShortLinkModel> {
     const { expiresAt, title, original, short } = Data;
     return this.urlsService.create({

@@ -17,5 +17,5 @@ model ShortLink {
   title     String?
   original  String
   short     String   @unique
-  clicks    Int      @default(0)
+  clicks    Int?      @default(0)
 }
