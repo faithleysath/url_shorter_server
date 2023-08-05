@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "urls.db"
+  url      = "file:urls.db"
 }
 
 model ShortLink {
