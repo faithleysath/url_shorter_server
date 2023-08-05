@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { UrlsModule } from './urls/urls.module';
 import { PrismaClient } from '@prisma/client';
 import { PrismaModule } from './prisma/prisma.module';
+import { TasksModule } from './tasks/tasks.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const DEFAULT_ADMIN = {
   email: 'admin',
@@ -64,6 +66,8 @@ const authenticate = async (email: string, password: string) => {
     ),
     UrlsModule,
     PrismaModule,
+    ScheduleModule.forRoot(),
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
