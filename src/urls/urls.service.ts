@@ -1,12 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ShortLink, Prisma } from '@prisma/client';
+import axios from 'axios';
 
 @Injectable()
 export class UrlsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getTitle(url: string): Promise<string> {
+    const res = await axios.get(url, { timeout: 1000 });
+    const title = res.data.match(/<title[^>]*>([^<]+)<\/title>/)[1];
+    return title;
+  }
+
   async create(data: Prisma.ShortLinkCreateInput): Promise<ShortLink> {
+    if (!data.title) {
+      data.title = await this.getTitle(data.original);
+    }
     return this.prisma.shortLink.create({
       data,
     });
@@ -52,5 +62,12 @@ export class UrlsService {
     return this.prisma.shortLink.delete({
       where,
     });
+  }
+
+  async exists(where: Prisma.ShortLinkWhereUniqueInput): Promise<boolean> {
+    const link = await this.prisma.shortLink.findUnique({
+      where,
+    });
+    return !!link;
   }
 }

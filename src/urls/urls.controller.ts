@@ -11,21 +11,23 @@ import {
 import { UrlsService } from './urls.service';
 import { ShortLink as ShortLinkModel } from '@prisma/client';
 import { CreateUrlDto } from './dto/create-url.dto';
-import { PrismaExceptionFilter } from '../prisma/prisma-exception.filter';
+import { PrismaRequestExceptionFilter } from '../prisma/prisma-exception.filter';
+import { AxiosExceptionFilter } from './exception/axios-exception.filters';
 
 @Controller('urls')
 export class UrlsController {
   constructor(private readonly urlsService: UrlsService) {}
 
-  @Post()
+  @Post('create')
+  @UseFilters(AxiosExceptionFilter)
   async create(
     @Body()
     Data: CreateUrlDto,
   ): Promise<ShortLinkModel> {
-    const { expiresAt, title, original, short } = Data;
+    const { title, expiresAt, original, short } = Data;
     return this.urlsService.create({
-      expiresAt,
       title,
+      expiresAt,
       original,
       short,
     });
@@ -50,6 +52,13 @@ export class UrlsController {
     return this.urlsService.findOne({
       short: short,
       expiresAt: { gte: new Date() },
+    });
+  }
+
+  @Get('exists/:short')
+  async exists(@Param('short') short: string): Promise<boolean> {
+    return this.urlsService.exists({
+      short: short,
     });
   }
 

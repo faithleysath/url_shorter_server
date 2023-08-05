@@ -4,10 +4,13 @@ import {
   ArgumentsHost,
   HttpStatus,
 } from '@nestjs/common';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
 
 @Catch(PrismaClientKnownRequestError)
-export class PrismaExceptionFilter implements ExceptionFilter {
+export class PrismaRequestExceptionFilter implements ExceptionFilter {
   catch(exception: PrismaClientKnownRequestError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
@@ -19,6 +22,12 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         statusCode: HttpStatus.NOT_FOUND,
         message: 'Record not found',
       });
+    } else if (exception.code === 'P2002') {
+      // 唯一性冲突的情况
+      response.status(HttpStatus.CONFLICT).json({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'Unique constraint failed',
+      });
     } else {
       // 其他异常情况
       response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -26,5 +35,19 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         message: 'Internal server error',
       });
     }
+  }
+}
+
+@Catch(PrismaClientValidationError)
+export class PrismaValidationExceptionFilter implements ExceptionFilter {
+  catch(exception: PrismaClientValidationError, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse();
+
+    // 根据异常类型进行适当的处理
+    response.status(HttpStatus.BAD_REQUEST).json({
+      statusCode: HttpStatus.BAD_REQUEST,
+      message: exception.message,
+    });
   }
 }

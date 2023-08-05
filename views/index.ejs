@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <title>短链接生成器</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 98vh;
+      }
+      .bg {
+        background-image: url('https://api.asxe.vip/random.php');
+        background-size: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: -1;
+      }
+      .bg-blur {
+        filter: brightness(0.6); /* 添加变暗效果 */
+        -webkit-filter: brightness(0.6); /* 兼容性处理 */
+      }
+      .container {
+        background-color: #f1f1f1;
+        opacity: 0.9;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0px 0px 10px #888;
+        backdrop-filter: blur(10px);
+      }
+
+      .input-field {
+        margin-bottom: 10px;
+      }
+
+      .output-field {
+        width: 100%;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg bg-blur"></div>
+    <div class="container">
+      <div class="input-field">
+        <label for="original-url">原链接：</label>
+        <input
+          type="url"
+          id="original-url"
+          placeholder="以http://或https://开头"
+        />
+      </div>
+      <div class="input-field">
+        <label for="short-url">短链码：</label>
+        <input type="text" id="short-url" placeholder="可不填，也可自定义" />
+      </div>
+      <div class="input-field">
+        <label for="expiration">有效期：</label>
+        <select id="expiration">
+          <option value="1">1天</option>
+          <option value="7">7天</option>
+          <option value="30">30天</option>
+          <option value="180">180天</option>
+          <option value="365">365天</option>
+          <option value="114514">永久</option>
+        </select>
+      </div>
+      <button
+        onclick="generateShortLink()"
+        style="margin-bottom: 10px; font-size: medium"
+      >
+        生成
+      </button>
+      <textarea
+        class="output-field"
+        id="output"
+        readonly
+        style="display: block"
+      ></textarea>
+      <!-- 加入github仓库地址 -->
+      <a
+        href="https://github.com/faithleysath/url_shorter_server"
+        target="_blank"
+        style="display: block; margin-top: 10px"
+        >github仓库</a
+      >
+    </div>
+
+    <script>
+      function alertInput(fieldId, msg) {
+        var field = document.getElementById(fieldId);
+        field.style.border = '2px solid red';
+        var n = 6;
+        var m = 100;
+        var i = 0;
+        var timer = setInterval(function () {
+          if (i < n) {
+            if (field.style.border == '2px solid red') {
+              field.removeAttribute('style');
+            } else {
+              field.style.border = '2px solid red';
+            }
+            i++;
+          } else {
+            // 清除样式field的所有style
+            field.removeAttribute('style');
+            field.focus();
+            clearInterval(timer);
+          }
+        }, m);
+        field.value = '';
+        var outputField = document.getElementById('output');
+        outputField.value = msg;
+      }
+      function generateShortLink() {
+        // 清空输出框
+        document.getElementById('output').value = '';
+        // 获取输入框的值
+        var originalUrl = document.getElementById('original-url').value;
+        var shortUrl = document.getElementById('short-url').value;
+        var expiration = document.getElementById('expiration').value;
+
+        // 生成短链接的逻辑
+
+        // 使用new Url()构造函数验证原链接是否合法
+        try {
+          var url = new URL(originalUrl);
+        } catch (e) {
+          alertInput('original-url', '请输入正确的原链接！');
+          return;
+        }
+        // 如果没有填写短链码，则生成随机的短链码
+        if (!shortUrl) {
+          // 生成随机的短链码
+          var chars =
+            '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+          shortUrl = '';
+          for (var i = 0; i < 6; i++) {
+            shortUrl += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          // 向后端发送请求，判断短链码是否已存在，GET /urls/exists/{short}
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', '/urls/exists/' + shortUrl, false);
+          xhr.send();
+          if (xhr.status == 200) {
+            // 如果短链码已存在，则重新生成
+            while (xhr.responseText == 'true') {
+              shortUrl = '';
+              for (var i = 0; i < 6; i++) {
+                shortUrl += chars.charAt(
+                  Math.floor(Math.random() * chars.length),
+                );
+              }
+              xhr.open('GET', '/urls/exists/' + shortUrl, false);
+              xhr.send();
+            }
+          } else {
+            // 输出框提示网络错误
+            document.getElementById('output').value = '网络错误，请重新生成！';
+            return;
+          }
+        } else {
+          // 先验证短链码是否合法，只能是数字或字母，且长度不限
+          var reg = /^[0-9a-zA-Z]+$/;
+          if (!reg.test(shortUrl)) {
+            alertInput('short-url', '请输入正确的短链码！');
+            return;
+          }
+          // 判断短链码是否已存在，GET /urls/exists/{short}
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', '/urls/exists/' + shortUrl, false);
+          xhr.send();
+          if (xhr.status == 200) {
+            // 如果短链码已存在，则提示用户重新填写，和原链接输入框一样的逻辑
+            if (xhr.responseText == 'true') {
+              alertInput('short-url', '该短链码已存在，请重新填写！');
+              return;
+            }
+          } else {
+            // 输出框提示网络错误
+            document.getElementById('output').value = '网络错误，请重新生成！';
+            return;
+          }
+        }
+        // 构造请求体
+        expireAt = new Date(
+          new Date().getTime() + expiration * 24 * 60 * 60 * 1000,
+        );
+        var data = {
+          original: originalUrl,
+          short: shortUrl,
+          expiresAt: expireAt.toISOString(),
+        };
+        // 向后端发送请求，POST /urls/create
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/urls/create', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+        if (xhr.status == 201) {
+          // 如果成功，将结果显示在文本框中
+          // 获取当前网站的域名
+          var domain = window.location.host;
+          // 构造短链接
+          var shortUrl = 'http://' + domain + '/link/' + shortUrl;
+          var outputField = document.getElementById('output');
+          outputField.value =
+            '短链接：' + shortUrl + '\n有效期：' + expiration + '天';
+          // 使输出框获得焦点
+          outputField.focus();
+        } else if (xhr.status == 400) {
+          // 如果失败，将结果显示在文本框中
+          var outputField = document.getElementById('output');
+          outputField.value = '此url公网无法访问，请更换url！';
+        } else {
+          // 如果失败，将结果显示在文本框中
+          var outputField = document.getElementById('output');
+          outputField.value = '生成失败，请重新生成！\n' + xhr.responseText;
+        }
+        // 清除输入框的值
+        document.getElementById('original-url').value = '';
+        document.getElementById('short-url').value = '';
+      }
+    </script>
+  </body>
+</html>
