@@ -18,4 +18,5 @@ model ShortLink {
   original  String
   short     String   @unique
   clicks    Int?     @default(0)
+  updatedAt DateTime @updatedAt @default(now())
 }

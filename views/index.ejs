@@ -188,9 +188,7 @@
           }
         }
         // 构造请求体
-        expireAt = new Date(
-          new Date().getTime() + expiration * 24 * 60 * 60 * 1000,
-        );
+        expireAt = new Date(Date.now() + expiration * 24 * 60 * 60 * 1000);
         var data = {
           original: originalUrl,
           short: shortUrl,
