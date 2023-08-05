@@ -12,7 +12,6 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalFilters(new PrismaRequestExceptionFilter());
   app.useGlobalFilters(new PrismaValidationExceptionFilter());
-  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Cats example')

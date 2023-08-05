@@ -5,7 +5,7 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+  <p align="center">基于<a herf="https://nestjs.com/" target="_blank">Nest.js</a>框架的短链接生成器</p>
     <p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
@@ -22,52 +22,56 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## 描述
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+短链接项目的后端+简易前端，基于以下框架
 
-## Installation
+1. TypeScript
+2. Nest.js
+3. Admin.js
+4. Prisma
+5. Swagger
+
+## 安装
+
+1. 克隆本仓库
 
 ```bash
 $ pnpm install
+$ npx prisma migrate dev --name init
+$ npx prisma generate
 ```
 
-## Running the app
+## 运行
 
 ```bash
-# development
+# 开发
 $ pnpm run start
 
-# watch mode
+# 开发环境
 $ pnpm run start:dev
 
-# production mode
+# 生产环境
+$ pnpm build
 $ pnpm run start:prod
 ```
 
-## Test
+## 使用说明
 
-```bash
-# unit tests
-$ pnpm run test
+### Swagger 文档
 
-# e2e tests
-$ pnpm run test:e2e
+访问路径：`your_domain/api`
 
-# test coverage
-$ pnpm run test:cov
-```
+### 后台管理
 
-## Support
+访问路径：`your_domain/admin`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+账号、密码默认都是`admin`，修改可在`src/app.module.ts`改
 
-## Stay in touch
+### 首页
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+访问路径：`your_domain`
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+[MIT licensed](LICENSE).

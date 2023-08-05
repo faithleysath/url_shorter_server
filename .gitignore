@@ -36,3 +36,10 @@ lerna-debug.log*
 
 # Config
 .env
+
+# db
+*.db
+*.db-journal
+
+# migrations文件夹
+migrations
